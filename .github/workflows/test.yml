@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run config tests
+        run: python tests/test_config.py
+
+      - name: Run pytest
+        env:
+          DEVICE_TOKENS: "test-token-001:device-001,test-token-002:device-002"
+        run: pytest tests/ -v --ignore=tests/test_config.py

@@ -16,3 +16,4 @@ torchvision>=0.17
 
 # 開発
 pytest>=8.0
+httpx>=0.27
