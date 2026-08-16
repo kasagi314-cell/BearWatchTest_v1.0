@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 7.0 のルート証明書ストアは古い。
+  本番アプリでは <certificates src="@raw/ca_cert"/> で自前 CA を同梱する。
+  この probe アプリでは cleartext を許可しておく（TLS 疎通テスト用）。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- 本番では自前 CA を追加:
+            <certificates src="@raw/server_ca" />
+            -->
+        </trust-anchors>
+    </base-config>
+</network-security-config>

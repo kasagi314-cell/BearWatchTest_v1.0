@@ -1,0 +1,98 @@
+# ==================================================================
+# 秘密情報 — 絶対にコミットしない
+# ==================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials.json
+device_tokens.json
+
+# ==================================================================
+# 個人情報を含むデータ — 絶対にコミットしない
+# ==================================================================
+# 撮影画像・映像には通行人や車両が写り込む。個人情報として扱う。
+datasets/
+media/
+events/
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+!docs/**/*.png
+!docs/**/*.jpg
+
+# イベントデータ（座標・時刻・画像パスを含む）
+*.jsonl
+!tests/fixtures/*.jsonl
+
+# 設置地点の座標を含む校正ファイル
+calib/
+*_calib.json
+site_*.json
+
+# ==================================================================
+# Python
+# ==================================================================
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# ==================================================================
+# データベース・ログ・テストログ
+# ==================================================================
+*.db
+*.sqlite
+*.sqlite3
+logs/
+*.log
+testlogs/
+
+# ==================================================================
+# Android
+# ==================================================================
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/captures/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# device_probe ビルド成果物
+tools/device_probe/.gradle/
+tools/device_probe/.idea/
+tools/device_probe/app/build/
+tools/device_probe/build/
+tools/device_probe/local.properties
+tools/device_probe/gradle/.idea/
+tools/device_probe/hs_err_pid*.log
+
+# ==================================================================
+# モデルの重み（大きいので Git LFS か別管理）
+# ==================================================================
+*.pt
+*.tflite
+*.onnx
+models/
+
+# ==================================================================
+# エディタ・OS・ツール
+# ==================================================================
+.vscode/settings.json
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+*.swp

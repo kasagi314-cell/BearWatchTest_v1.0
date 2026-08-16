@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "description": "端末設定の単一の正。サーバと端末の双方がこのファイルを読んで検証する。両者で定義がずれると、サーバが通した設定を端末が拒否して永久にロールバックし続ける事故が起きる。",
+  "params": {
+    "schedule.start_min": {
+      "type": "int",
+      "min": 0,
+      "max": 1439,
+      "default": 300,
+      "unit": "分(0時からの経過)",
+      "critical": false,
+      "desc": "監視開始時刻。既定 05:00"
+    },
+    "schedule.end_min": {
+      "type": "int",
+      "min": 0,
+      "max": 1439,
+      "default": 1140,
+      "unit": "分(0時からの経過)",
+      "critical": false,
+      "desc": "監視終了時刻。既定 19:00"
+    },
+    "capture.interval_ms": {
+      "type": "int",
+      "min": 500,
+      "max": 60000,
+      "default": 2000,
+      "unit": "ms",
+      "critical": false,
+      "desc": "検知フレームの取得間隔。短すぎると処理が追いつかず電池も持たない"
+    },
+    "capture.preview_long_edge": {
+      "type": "int",
+      "min": 320,
+      "max": 1920,
+      "default": 1280,
+      "unit": "px",
+      "critical": false,
+      "desc": "検知に使う解像度。ここを下げると遠距離検知が成立しなくなる"
+    },
+    "capture.still_long_edge": {
+      "type": "int",
+      "min": 640,
+      "max": 4096,
+      "default": 2592,
+      "unit": "px",
+      "critical": false,
+      "desc": "高解像度撮影のサイズ"
+    },
+    "s1.fg_threshold": {
+      "type": "int",
+      "min": 1,
+      "max": 255,
+      "default": 25,
+      "unit": "階調",
+      "critical": false,
+      "desc": "前景判定の閾値。下げると誤検知が急増する"
+    },
+    "s1.luminance_delta_reject": {
+      "type": "int",
+      "min": 1,
+      "max": 255,
+      "default": 15,
+      "unit": "階調",
+      "critical": false,
+      "desc": "全体輝度がこれ以上変化したフレームは破棄する(雲・露出変動対策)"
+    },
+    "s2.min_track_frames": {
+      "type": "int",
+      "min": 2,
+      "max": 20,
+      "default": 3,
+      "unit": "フレーム",
+      "critical": false,
+      "desc": "この数以上追跡できたトラックのみ通す"
+    },
+    "s2.speed_min_mps": {
+      "type": "float",
+      "min": 0.0,
+      "max": 10.0,
+      "default": 0.3,
+      "unit": "m/s",
+      "critical": false,
+      "desc": "速度フィルタの下限"
+    },
+    "s2.speed_max_mps": {
+      "type": "float",
+      "min": 0.1,
+      "max": 20.0,
+      "default": 3.0,
+      "unit": "m/s",
+      "critical": false,
+      "desc": "速度フィルタの上限"
+    },
+    "s2.size_tol_min": {
+      "type": "float",
+      "min": 0.1,
+      "max": 1.0,
+      "default": 0.5,
+      "unit": "倍",
+      "critical": false,
+      "desc": "期待見かけサイズに対する許容下限"
+    },
+    "s2.size_tol_max": {
+      "type": "float",
+      "min": 1.0,
+      "max": 10.0,
+      "default": 2.0,
+      "unit": "倍",
+      "critical": false,
+      "desc": "期待見かけサイズに対する許容上限"
+    },
+    "s3.enabled": {
+      "type": "bool",
+      "default": false,
+      "critical": false,
+      "desc": "ROI分類器の有効化。学習データが貯まるまでは false"
+    },
+    "s3.threshold": {
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.05,
+      "critical": false,
+      "desc": "ROI分類器の閾値。初期は低く"
+    },
+    "record.prebuffer_s": {
+      "type": "int",
+      "min": 0,
+      "max": 60,
+      "default": 15,
+      "unit": "秒",
+      "critical": false,
+      "desc": "リングバッファの長さ"
+    },
+    "record.max_duration_s": {
+      "type": "int",
+      "min": 5,
+      "max": 120,
+      "default": 30,
+      "unit": "秒",
+      "critical": false,
+      "desc": "1件あたりの最大録画長"
+    },
+    "upload.daily_limit_mb": {
+      "type": "int",
+      "min": 1,
+      "max": 1000,
+      "default": 10,
+      "unit": "MB",
+      "critical": false,
+      "desc": "日次通信量の上限"
+    },
+    "upload.thumbnail_long_edge": {
+      "type": "int",
+      "min": 160,
+      "max": 1920,
+      "default": 640,
+      "unit": "px",
+      "critical": false,
+      "desc": "第一報で送る縮小画像のサイズ"
+    },
+    "heartbeat.interval_s": {
+      "type": "int",
+      "min": 30,
+      "max": 900,
+      "default": 60,
+      "unit": "秒",
+      "critical": true,
+      "desc": "ハートビート間隔。長すぎると設定変更もロールバック確認も遅れる"
+    },
+    "safety.temp_shutdown_c": {
+      "type": "float",
+      "min": 45.0,
+      "max": 60.0,
+      "default": 55.0,
+      "unit": "℃",
+      "critical": true,
+      "desc": "この温度で監視を停止する。安全要件のため端末側でも強制クランプする"
+    },
+    "safety.temp_resume_c": {
+      "type": "float",
+      "min": 30.0,
+      "max": 55.0,
+      "default": 45.0,
+      "unit": "℃",
+      "critical": true,
+      "desc": "この温度まで下がったら再開する"
+    },
+    "storage.min_free_mb": {
+      "type": "int",
+      "min": 128,
+      "max": 8192,
+      "default": 1024,
+      "unit": "MB",
+      "critical": false,
+      "desc": "この値を下回ったら古い録画から削除する"
+    },
+    "config.probation_s": {
+      "type": "int",
+      "min": 120,
+      "max": 3600,
+      "default": 900,
+      "unit": "秒",
+      "critical": true,
+      "desc": "新設定の試用期間。この間に確認が取れなければ自動で前の設定に戻す"
+    },
+    "config.required_heartbeats": {
+      "type": "int",
+      "min": 1,
+      "max": 10,
+      "default": 3,
+      "unit": "回",
+      "critical": true,
+      "desc": "試用期間中にこの回数だけハートビートが成功したら設定を確定する"
+    },
+    "config.max_boots_in_trial": {
+      "type": "int",
+      "min": 1,
+      "max": 10,
+      "default": 2,
+      "unit": "回",
+      "critical": true,
+      "desc": "試用期間中の再起動がこの回数を超えたらクラッシュループとみなして戻す"
+    },
+    "test_mode.max_duration_s": {
+      "type": "int",
+      "min": 60,
+      "max": 7200,
+      "default": 900,
+      "unit": "秒",
+      "critical": true,
+      "desc": "試験モードの最大継続時間。必ず自動終了させる。ここを無効化できるとストレージを食い潰す"
+    },
+    "test_mode.max_storage_mb": {
+      "type": "int",
+      "min": 100,
+      "max": 32768,
+      "default": 4096,
+      "unit": "MB",
+      "critical": true,
+      "desc": "試験モードが使用できるストレージ上限。超えたら自動終了する"
+    },
+    "test_mode.frame_stride": {
+      "type": "int",
+      "min": 1,
+      "max": 10,
+      "default": 1,
+      "unit": "フレーム",
+      "critical": false,
+      "desc": "試験モードで何フレームおきに保存するか。1なら全フレーム"
+    },
+    "test_mode.trace_stages": {
+      "type": "bool",
+      "default": true,
+      "critical": false,
+      "desc": "各段の棄却理由を1候補ごとに記録する。Phase1で『なぜ落ちたか』を追うために必要"
+    }
+  },
+  "constraints": [
+    {
+      "id": "C001",
+      "kind": "lt",
+      "a": "schedule.start_min",
+      "b": "schedule.end_min",
+      "msg": "監視開始時刻は終了時刻より前である必要があります(日跨ぎは非対応)"
+    },
+    {
+      "id": "C002",
+      "kind": "lt",
+      "a": "s2.speed_min_mps",
+      "b": "s2.speed_max_mps",
+      "msg": "速度フィルタの下限は上限より小さい必要があります"
+    },
+    {
+      "id": "C003",
+      "kind": "lt",
+      "a": "s2.size_tol_min",
+      "b": "s2.size_tol_max",
+      "msg": "サイズ許容の下限は上限より小さい必要があります"
+    },
+    {
+      "id": "C004",
+      "kind": "lt",
+      "a": "safety.temp_resume_c",
+      "b": "safety.temp_shutdown_c",
+      "msg": "再開温度は停止温度より低い必要があります"
+    },
+    {
+      "id": "C005",
+      "kind": "le",
+      "a": "upload.thumbnail_long_edge",
+      "b": "capture.still_long_edge",
+      "msg": "縮小画像が高解像度画像より大きくなっています"
+    },
+    {
+      "id": "C006",
+      "kind": "ge_product",
+      "a": "config.probation_s",
+      "factors": [
+        "heartbeat.interval_s",
+        "config.required_heartbeats"
+      ],
+      "multiplier": 2.0,
+      "msg": "試用期間が短すぎます。必要回数のハートビートが物理的に成立せず、正しい設定でも必ずロールバックします。probation_s >= heartbeat.interval_s * required_heartbeats * 2 としてください"
+    },
+    {
+      "id": "C007",
+      "kind": "le",
+      "a": "capture.preview_long_edge",
+      "b": "capture.still_long_edge",
+      "msg": "プレビュー解像度が静止画解像度を超えています"
+    }
+  ],
+  "hard_clamps": {
+    "safety.temp_shutdown_c": [
+      45.0,
+      60.0
+    ],
+    "safety.temp_resume_c": [
+      30.0,
+      55.0
+    ],
+    "config.probation_s": [
+      120,
+      3600
+    ],
+    "config.required_heartbeats": [
+      1,
+      10
+    ],
+    "config.max_boots_in_trial": [
+      1,
+      10
+    ],
+    "heartbeat.interval_s": [
+      30,
+      900
+    ],
+    "test_mode.max_duration_s": [
+      60,
+      7200
+    ],
+    "test_mode.max_storage_mb": [
+      100,
+      32768
+    ]
+  },
+  "warnings": [
+    {
+      "id": "W001",
+      "kind": "estimated_daily_mb",
+      "msg": "想定される日次通信量が upload.daily_limit_mb を超えています。日中に送信が止まる可能性があります"
+    },
+    {
+      "id": "W002",
+      "kind": "preview_range",
+      "msg": "プレビュー解像度が低く、50m先の検知が成立しない可能性があります"
+    },
+    {
+      "id": "W003",
+      "kind": "test_mode_long",
+      "msg": "試験モードの継続時間が長く、ストレージを大量に消費する可能性があります"
+    }
+  ]
+}
