@@ -3,6 +3,7 @@
 サーバを実プロセスで起動し、実 TCP 接続で検証する。
 FastAPI の TestClient（インプロセス呼び出し）は使わない。
 """
+import subprocess
 import sys
 import os
 import shutil
@@ -177,3 +178,20 @@ class TestHeartbeatEndpoint:
             headers={"Authorization": "Bearer test-token-001"},
         )
         assert resp.status_code == 200
+
+
+class TestFakeDevice:
+    def test_fake_device_sends_heartbeats(self, server_url):
+        """fake_device がハートビートを3回送信して正常終了する"""
+        proc = subprocess.run(
+            [sys.executable, "tools/fake_device/main.py",
+             "--server", server_url,
+             "--token", "test-token-001",
+             "--interval", "0.5",
+             "--count", "3"],
+            capture_output=True, text=True, timeout=30,
+            cwd=str(Path(__file__).resolve().parents[1]),
+        )
+        assert proc.returncode == 0
+        assert "heartbeat 1" in proc.stdout.lower()
+        assert "heartbeat 3" in proc.stdout.lower()
