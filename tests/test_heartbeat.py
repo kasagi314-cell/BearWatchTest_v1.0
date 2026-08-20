@@ -90,14 +90,17 @@ class TestDatabase:
         shutil.rmtree(self.tmp)
 
     def test_tables_created(self):
-        """テーブルが3つ作成される"""
+        """テーブルが6つ作成される"""
         cur = self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         )
         tables = [r[0] for r in cur.fetchall()]
+        assert "commands" in tables
         assert "device_configs" in tables
         assert "devices" in tables
+        assert "events" in tables
         assert "heartbeats" in tables
+        assert "server_metrics" in tables
 
     def test_record_heartbeat(self):
         """ハートビートが記録される"""
