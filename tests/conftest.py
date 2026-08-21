@@ -26,6 +26,8 @@ def server_url(tmp_path_factory):
     env = os.environ.copy()
     env["DATABASE_URL"] = f"sqlite:///{db_path}"
     env["DEVICE_TOKENS"] = "test-token-001:device-001,test-token-002:device-002"
+    env["MEDIA_ROOT"] = str(tmp / "media")
+    env["SKIP_MODEL_LOAD"] = "1"
 
     proc = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "server.api.app:app",

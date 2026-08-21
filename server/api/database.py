@@ -108,13 +108,17 @@ def record_heartbeat(
     db_path: str, device_id: str,
     battery_pct: int, battery_temp_c: float, uptime_s: int,
     config_etag: str, clock_offset_ms: int,
+    metrics: dict | None = None,
 ) -> None:
     conn = sqlite3.connect(db_path)
     conn.execute(
         """INSERT INTO heartbeats
-           (device_id, timestamp_utc, battery_pct, battery_temp_c, uptime_s, config_etag, clock_offset_ms)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
-        (device_id, now_utc(), battery_pct, battery_temp_c, uptime_s, config_etag, clock_offset_ms),
+           (device_id, timestamp_utc, battery_pct, battery_temp_c, uptime_s,
+            config_etag, clock_offset_ms, metrics_json)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (device_id, now_utc(), battery_pct, battery_temp_c, uptime_s,
+         config_etag, clock_offset_ms,
+         json.dumps(metrics) if metrics else None),
     )
     conn.commit()
     conn.close()
