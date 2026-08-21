@@ -38,12 +38,12 @@ def server_url(tmp_path_factory):
 
     url = f"http://127.0.0.1:{port}"
 
-    for _ in range(50):
+    for _ in range(150):
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=0.2):
                 break
         except OSError:
-            time.sleep(0.1)
+            time.sleep(0.2)
     else:
         proc.kill()
         raise RuntimeError("Server did not start")
