@@ -182,6 +182,14 @@ class TestHeartbeatEndpoint:
         )
         assert resp.status_code == 200
 
+    def test_config_no_config_returns_404(self, server_url):
+        """設定未登録で 404"""
+        resp = httpx.get(
+            f"{server_url}/api/v1/config",
+            headers={"Authorization": "Bearer test-token-001"},
+        )
+        assert resp.status_code == 404
+
 
 class TestFakeDevice:
     def test_fake_device_sends_heartbeats(self, server_url):

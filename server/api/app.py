@@ -11,6 +11,7 @@ from server.api.auth import TokenAuth, resolve_device_or_raise
 from server.api.database import init_db, ensure_device, record_heartbeat, get_active_config
 from server.api.commands import get_pending_commands, mark_delivered
 from server.api.events import router as events_router
+from server.api.config import router as config_router
 
 
 @asynccontextmanager
@@ -32,6 +33,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="BearWatch", lifespan=lifespan)
 app.include_router(events_router, prefix="/api")
+app.include_router(config_router, prefix="/api")
 
 
 @app.post("/api/v1/heartbeat", response_model=HeartbeatResponse)
