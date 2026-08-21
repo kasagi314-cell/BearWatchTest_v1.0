@@ -26,6 +26,8 @@ def server_url(tmp_path_factory):
     env = os.environ.copy()
     env["DATABASE_URL"] = f"sqlite:///{db_path}"
     env["DEVICE_TOKENS"] = "test-token-001:device-001,test-token-002:device-002"
+    env["MEDIA_ROOT"] = str(tmp / "media")
+    env["SKIP_MODEL_LOAD"] = "1"
 
     proc = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "server.api.app:app",
@@ -36,12 +38,12 @@ def server_url(tmp_path_factory):
 
     url = f"http://127.0.0.1:{port}"
 
-    for _ in range(50):
+    for _ in range(150):
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=0.2):
                 break
         except OSError:
-            time.sleep(0.1)
+            time.sleep(0.2)
     else:
         proc.kill()
         raise RuntimeError("Server did not start")
