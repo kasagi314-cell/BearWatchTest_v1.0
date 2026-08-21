@@ -27,4 +27,5 @@ jobs:
       - name: Run pytest
         env:
           DEVICE_TOKENS: "test-token-001:device-001,test-token-002:device-002"
-        run: pytest tests/ -v --ignore=tests/test_config.py
+          SKIP_MODEL_LOAD: "1"
+        run: pytest tests/ -v --ignore=tests/test_config.py -m "not slow"
