@@ -13,6 +13,7 @@ from server.api.database import (
     init_db, insert_event, get_event, update_event_status,
     update_event_scores, update_event_media_path,
 )
+from server.api.metrics import record_metric, get_metrics
 
 SAMPLE_EVENT = {
     "event_id": "evt-001",
@@ -99,3 +100,32 @@ class TestEventCRUD:
     def test_get_nonexistent(self):
         """存在しないイベントは None"""
         assert get_event(self.db_path, "no-such") is None
+
+
+class TestMetrics:
+    def setup_method(self):
+        self.tmp = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.tmp, "test.db")
+        init_db(self.db_path)
+
+    def teardown_method(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_record_and_get(self):
+        """メトリクスが記録・取得でき、同一バケットはインクリメントされる"""
+        record_metric(self.db_path, "s4_input_count", 1.0)
+        record_metric(self.db_path, "s4_input_count", 1.0)
+        from datetime import datetime, timezone
+        bucket = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
+        metrics = get_metrics(self.db_path, bucket)
+        assert metrics["s4_input_count"] == 2.0
+
+    def test_different_metrics(self):
+        """異なるメトリクスが独立している"""
+        record_metric(self.db_path, "s4_input_count", 1.0)
+        record_metric(self.db_path, "s4_animal_count", 1.0)
+        from datetime import datetime, timezone
+        bucket = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
+        metrics = get_metrics(self.db_path, bucket)
+        assert metrics["s4_input_count"] == 1.0
+        assert metrics["s4_animal_count"] == 1.0
